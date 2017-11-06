@@ -46,6 +46,12 @@ public class Main {
 			System.out.println("###############################################");
 			System.out.println();
 			// TODO: runSolver(new YourSolverHere(instance));
+			//Fractional Solver
+			runSolver(new FractionalSolver(),instance);
+			
+			//Unterschied zwischen optimum und heuristic
+			//runSolver(new BinarySolver(),instance);
+			runSolver(new HeuristicBinarySolver(),instance);
 			break;
 		default:
 			throw new IllegalArgumentException(usage);

@@ -1,6 +1,7 @@
 package knapsack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Solution of a generic knapsack problem
