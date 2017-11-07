@@ -12,6 +12,11 @@ import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
  */
 public class HeuristicBinarySolver implements SolverInterface<Solution> {
 
+	/**
+	 * HeuristicBinarySolver lÃ¶st ein gegebenes BinÃ¤res R.Problem mittels einer Heuristik
+	 * @param instance Die Problem Instanz
+	 * @return Solution gibt eine binÃ¤re LÃ¶sung zurÃ¼ck, welche nicht die schlechteste ist.
+	 */
 	@Override
 	public Solution solve(Instance instance) {
 		// TODO Auto-generated method stub
@@ -23,13 +28,13 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 		List<SortableItemValueWeightItem> itemsSortet = getSortedItemValueWeightItem(instance);
 		
 		/**
-		 * 3. Erstelle Lösungsvektor mit 0en initialisiert. O(1)
+		 * 3. Erstelle Lï¿½sungsvektor mit 0en initialisiert. O(1)
 		 */
 		Solution solution = new Solution(instance); //wir beginne damit, nichts mitzunehmen
 		//erstelle 0 Lï¿½sung
 
 		/**
-		 * 4. Gehe alle sortierten Objekte nacheinander durch und für jedes: O(n)
+		 * 4. Gehe alle sortierten Objekte nacheinander durch und fï¿½r jedes: O(n)
 		 */
 		for(SortableItemValueWeightItem item: itemsSortet) {
 			/**
@@ -40,45 +45,47 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 			solution.set(item.itemNumber, quantity);
 			
 			/**
-			 * 6. Prüfe ob Rucksack voll ? O(1)
-			 * 		Wenn ja, dann Terminiere und gebe Lösungsvektor aus O(1) 
-			 * 		Wenn nein, nehme das nächste Element und wiederhole 4. O(1)	
+			 * 6. Prï¿½fe ob Rucksack voll ? O(1)
+			 * 		Wenn ja, dann Terminiere und gebe Lï¿½sungsvektor aus O(1) 
+			 * 		Wenn nein, nehme das nï¿½chste Element und wiederhole 4. O(1)	
 			*/
 			
+			//Gebe Fortschritt auf der Konsole aus
 			Logger.println("Weight: "+solution.getWeight()+" / "+instance.getCapacity());
-			if(solution.getWeight()==instance.getCapacity()) {
-				return solution;
+			if(solution.getWeight()==instance.getCapacity()) { //falls kein Platz mehr vorhanden
+				return solution; //gebe LÃ¶sung aus
 			}
 		}
 		
-		return solution;
+		return solution; //In jedem Fall gebe eine LÃ¶sung aus
 	}
 	
 	/**
 	 * Berechne ob das Objekt in den Rucksack mitgenommen werden kann
 	 * @param itemNumber die Itemnummer
-	 * @param solution die Lösung, welche vlt. bereits gefüllt ist
-	 * @param instance die Instacne/Problem, welche das Zulässige gesammt gewicht hält
+	 * @param solution die Lï¿½sung, welche vlt. bereits gefï¿½llt ist
+	 * @param instance die Instacne/Problem, welche das Zulï¿½ssige gesammt gewicht hï¿½lt
 	 * @return Ergebnis ist 0 oder 1
 	 */
 	public int getItemQuantityFromRemindingSpace(int itemNumber, Solution solution,Instance instance) {
 		double remindingSpace = instance.getCapacity()-solution.getWeight(); //berechne restlichen Platz im Rucksack
 		double weightOfItem = instance.getWeight(itemNumber); //hole Gewicht des Items
-		double amountOfItem = remindingSpace/weightOfItem; //Berechne wie oft das Item reinpassen würde
+		double amountOfItem = remindingSpace/weightOfItem; //Berechne wie oft das Item reinpassen wï¿½rde
 		int trimmed = (int) trimAmount(amountOfItem, 0, 1); //begrenze das Item auf Intervall 0,1 und begrenze es auf 0 oder 1
+		//Gebe restlichen Platz auf der Konsole aus
 		Logger.print("RemindingSpace: "+remindingSpace+" | weightOfItem: "+weightOfItem+" | amoundOfItem: "+amountOfItem+" | trimmed: "+trimmed+" | ");
 		return trimmed;
 	}
 	
 	/**
-	 * Schneidet eine Zahl ab auf das minimum oder maximum, falls es außerhalb der Grenzen liegt
+	 * Schneidet eine Zahl ab auf das minimum oder maximum, falls es auï¿½erhalb der Grenzen liegt
 	 * @param amount Die Zahl selber
 	 * @param min das Minimum
 	 * @param max das Maximum
 	 * @return eine Zahl zwischen Min und Max, falls die Zahl dazwischen liegt, sonst die Grenze
 	 */
 	public double trimAmount(double amount, double min ,double max) {
-		return Math.min(Math.max(amount, min), max); //Wähle die kleinere zahl aus zwischen (Wähle das Maximum aus Zahl und minimum) und dem maximum
+		return Math.min(Math.max(amount, min), max); //Wï¿½hle die kleinere zahl aus zwischen (Wï¿½hle das Maximum aus Zahl und minimum) und dem maximum
 	}
 	
 	/**
@@ -93,7 +100,7 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 	}
 	
 	/**
-	 * Gibt eine List der Items zurück
+	 * Gibt eine List der Items zurï¿½ck
 	 * @param instance Die Probleminstanz
 	 * @return List<SortableItemValueWeightItem>
 	 */
@@ -102,7 +109,7 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 		
 		int amountItems = instance.getSize();
 		for(int i = 0; i<amountItems; i++) { //durchlaufe alle Items
-			//Erstelle neues <SortableItemValueWeightItem> und füge der Liste hinzu
+			//Erstelle neues <SortableItemValueWeightItem> und fï¿½ge der Liste hinzu
 			SortableItemValueWeightItem element = new SortableItemValueWeightItem(i, instance.getValue(i), instance.getWeight(i));
 			list.add(element);
 		}
@@ -111,16 +118,16 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 	}
 	
 	/**
-	 * Dies ist eine kleine private Hilfsklasse, mit welcher ich die Items sortieren möchte
-	 * ohne viel Auffwand. Die Klasse ist klein und denke ich selbsterklärend. Sie soll halt
-	 * nur eben ein Item nach Nutzen/Kosten sortieren können.
+	 * Dies ist eine kleine private Hilfsklasse, mit welcher ich die Items sortieren mï¿½chte
+	 * ohne viel Auffwand. Die Klasse ist klein und denke ich selbsterklï¿½rend. Sie soll halt
+	 * nur eben ein Item nach Nutzen/Kosten sortieren kï¿½nnen.
 	 * @author nilsb
 	 *
 	 */
 	private class SortableItemValueWeightItem implements Comparable {
 		
 		private int itemNumber;	//die Item Nummer
-		private double valueperweight; //das Nutzen Kosten Verhältnis
+		private double valueperweight; //das Nutzen Kosten Verhï¿½ltnis
 		
 		//einfacher Konstruktor
 		private SortableItemValueWeightItem(int itemNumber, double value, double weight) {
@@ -129,9 +136,9 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 		}
 
 		/**
-		 * CompareTo Methode, geeignet für SortableItemValueWeightItem
+		 * CompareTo Methode, geeignet fï¿½r SortableItemValueWeightItem
 		 * @param Object obj sollte vom Typ SortableItemValueWeightItem sein
-		 * @return -1 falls dieses Objekt einen höheren Nutzen/Kosten Faktor hat
+		 * @return -1 falls dieses Objekt einen hï¿½heren Nutzen/Kosten Faktor hat
 		 * @return 1 wenn dieser kleiner ist
 		 * @return 0 sonst
 		 */
@@ -139,7 +146,7 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 		public int compareTo(Object obj) {
 			if(obj instanceof SortableItemValueWeightItem) { //minimale Security
 				SortableItemValueWeightItem item = (SortableItemValueWeightItem) obj;
-				if(this.valueperweight>item.valueperweight) { //entweder bist du größer
+				if(this.valueperweight>item.valueperweight) { //entweder bist du grï¿½ï¿½er
 					return -1;
 				}
 				else if(this.valueperweight<item.valueperweight) { //oder kleiner
@@ -153,7 +160,7 @@ public class HeuristicBinarySolver implements SolverInterface<Solution> {
 		}
 		
 		/**
-		 * Einfach toString Methode für Debugging
+		 * Einfach toString Methode fï¿½r Debugging
 		 */
 		@Override
 		public String toString() {
